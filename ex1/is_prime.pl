@@ -1,7 +1,6 @@
 not_divisable_by_lower(_,1).
 not_divisable_by_lower(N,K) :-
-    C is ceiling(N / K),
-    not(N / K =:= C),
+    N mod K =\= 0,
     K_1 is K-1,
     not_divisable_by_lower(N,K_1).
 
