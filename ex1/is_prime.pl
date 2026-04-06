@@ -5,5 +5,6 @@ not_divisable_by_lower(N,K) :-
     not_divisable_by_lower(N,K_1).
 
 is_prime(N) :-
+    N > 1,
     N_2 is ceiling(N / 2),
     not_divisable_by_lower(N, N_2).
