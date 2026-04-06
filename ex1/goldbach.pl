@@ -5,7 +5,6 @@ goldbach(N, X, C) :-
     K is N - C,
     is_prime(K),
     is_prime(C),
-    !,
     X = [K, C].
 
 goldbach(N, X, C) :-
