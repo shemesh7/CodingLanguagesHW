@@ -1,4 +1,5 @@
-/* The predicate not is already implemented */
+not(X):-
+    \+ call(X).
 
 and(X, Y):-
     call(X), call(Y).
