@@ -114,6 +114,42 @@ pub fn test4() -> Stm {
     )
 }
 
+// a := 84 ; b := 22 ; c := 0 ; while b != 0 do (a := a << 1 ; b := b >> 1)
+// Expected: a = 2688, b = 0, c = 0
+pub fn test5() -> Stm {
+    Stm::Comp(
+        Box::new(Stm::Ass("a".to_string(), AExp::Num(84))),
+        Box::new(Stm::Comp(
+            Box::new(Stm::Ass("b".to_string(), AExp::Num(22))),
+            Box::new(Stm::Comp(
+                Box::new(Stm::Ass("c".to_string(), AExp::Num(0))),
+                Box::new(Stm::While(
+                    BExp::Neg(Box::new(BExp::Aeq(
+                        AExp::Var("b".to_string()),
+                        AExp::Num(0),
+                    ))),
+                    Box::new(Stm::Comp(
+                        Box::new(Stm::Ass(
+                            "a".to_string(),
+                            AExp::Shl(
+                                Box::new(AExp::Var("a".to_string())),
+                                Box::new(AExp::Num(1)),
+                            ),
+                        )),
+                        Box::new(Stm::Ass(
+                            "b".to_string(),
+                            AExp::Shr(
+                                Box::new(AExp::Var("b".to_string())),
+                                Box::new(AExp::Num(1)),
+                            ),
+                        )),
+                    )),
+                )),
+            )),
+        )),
+    )
+}
+
 // test6: do (x := x - 1) while (x >= 2)
 // Starting from s3 (x=3): 3->2 (continue), 2->1 (stop)
 // Expected: x = 1
@@ -167,42 +203,6 @@ pub fn test8() -> Stm {
                     Box::new(AExp::Var("x".to_string())),
                     Box::new(AExp::Num(1)),
                 ),
-            )),
-        )),
-    )
-}
-
-// a := 84 ; b := 22 ; c := 0 ; while b != 0 do (a := a << 1 ; b := b >> 1)
-// Expected: a = 2688, b = 0, c = 0
-pub fn test5() -> Stm {
-    Stm::Comp(
-        Box::new(Stm::Ass("a".to_string(), AExp::Num(84))),
-        Box::new(Stm::Comp(
-            Box::new(Stm::Ass("b".to_string(), AExp::Num(22))),
-            Box::new(Stm::Comp(
-                Box::new(Stm::Ass("c".to_string(), AExp::Num(0))),
-                Box::new(Stm::While(
-                    BExp::Neg(Box::new(BExp::Aeq(
-                        AExp::Var("b".to_string()),
-                        AExp::Num(0),
-                    ))),
-                    Box::new(Stm::Comp(
-                        Box::new(Stm::Ass(
-                            "a".to_string(),
-                            AExp::Shl(
-                                Box::new(AExp::Var("a".to_string())),
-                                Box::new(AExp::Num(1)),
-                            ),
-                        )),
-                        Box::new(Stm::Ass(
-                            "b".to_string(),
-                            AExp::Shr(
-                                Box::new(AExp::Var("b".to_string())),
-                                Box::new(AExp::Num(1)),
-                            ),
-                        )),
-                    )),
-                )),
             )),
         )),
     )
