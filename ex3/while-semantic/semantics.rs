@@ -14,22 +14,36 @@ pub fn solve_a(e: &AExp, s: &State) -> i32 {
         AExp::Mult(e1, e2) => solve_a(e1, s) * solve_a(e2, s),
         AExp::Sub(e1, e2) => solve_a(e1, s) - solve_a(e2, s),
         AExp::Iand(e1, e2) => solve_a(e1, s) & solve_a(e2, s),
+        // x << y = x * 2^y
+        AExp::Shl(e1, e2) => solve_a(e1, s) << (solve_a(e2, s) as u32),
+        // x >> y = floor(x / 2^y)
+        AExp::Shr(e1, e2) => solve_a(e1, s) >> (solve_a(e2, s) as u32),
     }
 }
 
-// BVal is simply the Rust 'bool' type, mapping to OCaml's "tt" and "ff"
-pub type BVal = bool;
+// BVal is a string: "tt" for true, "ff" for false
+pub type BVal = String;
 
-// solve_b: BExp -> State -> BVal (bool)
+// solve_b: BExp -> State -> BVal
 pub fn solve_b(e: &BExp, s: &State) -> BVal {
     match e {
-        BExp::True => true, 
-        BExp::False => false, 
-        BExp::Neg(e1) => !solve_b(e1, s), 
-        BExp::Beq(e1, e2) => solve_b(e1, s) == solve_b(e2, s), 
-        BExp::Aeq(e1, e2) => solve_a(e1, s) == solve_a(e2, s), 
-        BExp::Gte(e1, e2) => solve_a(e1, s) >= solve_a(e2, s), 
-        BExp::And(e1, e2) => solve_b(e1, s) && solve_b(e2, s),
+        BExp::True => "tt".to_string(),
+        BExp::False => "ff".to_string(),
+        BExp::Neg(e1) => {
+            if solve_b(e1, s) == "tt" { "ff".to_string() } else { "tt".to_string() }
+        }
+        BExp::Beq(e1, e2) => {
+            if solve_b(e1, s) == solve_b(e2, s) { "tt".to_string() } else { "ff".to_string() }
+        }
+        BExp::Aeq(e1, e2) => {
+            if solve_a(e1, s) == solve_a(e2, s) { "tt".to_string() } else { "ff".to_string() }
+        }
+        BExp::Gte(e1, e2) => {
+            if solve_a(e1, s) >= solve_a(e2, s) { "tt".to_string() } else { "ff".to_string() }
+        }
+        BExp::And(e1, e2) => {
+            if solve_b(e1, s) == "tt" && solve_b(e2, s) == "tt" { "tt".to_string() } else { "ff".to_string() }
+        }
     }
 }
 
@@ -59,9 +73,17 @@ pub fn s1() -> State {
 }
 
 // Initial state s2 (x = 10, y = 5)
+#[allow(dead_code)]
 pub fn s2() -> State {
     let mut s = HashMap::new();
     s.insert("x".to_string(), 10);
     s.insert("y".to_string(), 5);
+    s
+}
+
+// Initial state s3 (x = 3)
+pub fn s3() -> State {
+    let mut s = HashMap::new();
+    s.insert("x".to_string(), 3);
     s
 }
